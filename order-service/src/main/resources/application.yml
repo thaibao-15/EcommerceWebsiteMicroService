@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /identity
+
+spring:
+  datasource:
+    url: ${DBMS_CONNECTION:jdbc:sqlserver://localhost:1433;databaseName=dbBanHang;encrypt=true;trustServerCertificate=true}
+    username: ${DBMS_USERNAME:sa}
+    password: ${DBMS_PASSWORD:12345}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#spring:
+#  application:
+#    name: webBanHang
+#  datasource:
+#    url: "jdbc:mysql://mysql2:3306/dbBanHang"
+#    driverClassName: "com.mysql.cj.jdbc.Driver"
+#    username: root
+#    password: root
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+
+jwt:
+  signerKey: ${JWT_SIGNERKEY:baodeptrai16qTFQgn0y3Rw3U9oKO8Jn7gDxUi54jaB4mVGRwh1pkY7CQaDfgYfB}
+  valid-duration: 3600 # in second
+  refreshable-duration: 36000 # in seconds

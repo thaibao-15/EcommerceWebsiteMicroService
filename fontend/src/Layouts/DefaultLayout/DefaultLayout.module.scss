@@ -1,0 +1,38 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  margin-left: 0px; /* Space for fixed sidebar */
+  padding-top: 60px; /* Để tránh bị che bởi header cố định */
+  background-color: var(--background-color);
+  min-height: calc(100vh - 60px);
+}
+
+.content { 
+  flex: 1;
+  padding: 24px 16px;
+  min-height: 600px;
+  background-color: #f8f9fa;
+  width: 100%;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .container {
+    margin-left: 0;
+    padding-top: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin-left: 0;
+    padding-top: 50px;
+  }
+}
