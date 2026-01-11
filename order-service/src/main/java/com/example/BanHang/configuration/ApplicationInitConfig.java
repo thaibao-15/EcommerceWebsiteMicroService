@@ -1,43 +1,73 @@
 package com.example.BanHang.configuration;
 
-import com.example.BanHang.entity.User;
-import com.example.BanHang.enums.Role;
-import com.example.BanHang.repository.UserRepository;
 
+import com.example.BanHang.constant.PredefinedRole;
+import com.example.BanHang.entity.Role;
+import com.example.BanHang.entity.User;
+import com.example.BanHang.repository.RoleRepository;
+import com.example.BanHang.repository.UserRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 
 @Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class ApplicationInitConfig {
-    // tao tai khoan admin khi lần đầu insert vào database
-    @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository) {
-        return args -> {
-            if (userRepository.findByUsername("admin").isEmpty()) {
-                var roles = new HashSet<String>();
-                roles.add(Role.ADMIN.name());
 
-                PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    PasswordEncoder passwordEncoder;
+
+    @NonFinal
+    static final String ADMIN_USER_NAME = "admin";
+
+    @NonFinal
+    static final String ADMIN_PASSWORD = "admin";
+
+    @Bean
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
+        log.info("Initializing application.....");
+        return args -> {
+            if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
+
+                roleRepository.findById(PredefinedRole.USER_ROLE)
+                        .orElseGet(()-> roleRepository
+                                .save(Role.builder()
+                                        .name(PredefinedRole.USER_ROLE)
+                                        .description("User role")
+                                        .build()));
+
+
+                Role adminRole = roleRepository.findById(PredefinedRole.ADMIN_ROLE)
+                        .orElseGet(()->roleRepository
+                                .save(Role.builder()
+                                        .name(PredefinedRole.ADMIN_ROLE)
+                                        .description("Admin role")
+                                        .build()));
+
+                var roles = new HashSet<Role>();
+                roles.add(adminRole);
 
                 User user = User.builder()
-                        .username("admin")
-                        .password(passwordEncoder.encode("admin"))
-//                        .roles(roles)
+                        .username(ADMIN_USER_NAME)
+//                        .emailVerified(true)
+                        .password(passwordEncoder.encode(ADMIN_PASSWORD))
+                        .roles(roles)
                         .build();
+
                 userRepository.save(user);
-                log.warn("user has been created with default password, please change");
+                log.warn("admin user has been created with default password: admin, please change it");
             }
+            log.info("Application initialization completed .....");
         };
     }
 }
