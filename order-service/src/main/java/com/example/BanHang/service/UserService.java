@@ -55,7 +55,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 //    @PreAuthorize("hasRole('ADMIN')")
-    @PreAuthorize("hasAuthority('update')")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public List<UserResponse> getAllUsers(){
         return userRepository.findAll()
                 .stream()
