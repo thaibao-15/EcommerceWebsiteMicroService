@@ -83,7 +83,7 @@ public class Authenticationservice {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getId())
                 .issuer("webbanhang.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
