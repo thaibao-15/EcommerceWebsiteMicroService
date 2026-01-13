@@ -3,12 +3,20 @@ package com.example.demo.configuration;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FeignAuthInterceptor implements RequestInterceptor {
+
     @Override
-    public void apply(RequestTemplate requestTemplate) {
-        String token = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
-        requestTemplate.header("Authorization","Bearer " + token);
-        // tự động thêm bearer token vào feign client
+    public void apply(RequestTemplate template) {
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            String token = jwtAuth.getToken().getTokenValue();
+            template.header("Authorization", "Bearer " + token);
+        }
     }
 }

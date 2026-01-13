@@ -88,9 +88,9 @@ public class UserService {
 
     public UserResponse getMyInfo(){
         var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
+        String userId = context.getAuthentication().getName();
 
-        User user= userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user= userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
