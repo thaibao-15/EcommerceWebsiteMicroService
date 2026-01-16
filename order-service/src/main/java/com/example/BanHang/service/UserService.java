@@ -1,10 +1,10 @@
 package com.example.BanHang.service;
 
+import com.example.dto.even.NotificationEvent;
 import com.example.BanHang.dto.request.UserCreationRequest;
 import com.example.BanHang.dto.request.UserUpdateRequest;
 import com.example.BanHang.dto.response.UserResponse;
 import com.example.BanHang.entity.User;
-import com.example.BanHang.enums.Role;
 import com.example.BanHang.exception.AppException;
 import com.example.BanHang.exception.ErrorCode;
 import com.example.BanHang.mapper.UserMapper;
@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +35,8 @@ public class UserService {
     UserRepository userRepository;
     RoleRepository roleRepository;
     CartService cartService;
+
+    KafkaTemplate<Object, NotificationEvent> kafkaTemplate;
     PasswordEncoder passwordEncoder =new BCryptPasswordEncoder();
 
     public UserResponse createUser(UserCreationRequest request){
@@ -48,8 +51,15 @@ public class UserService {
 //        HashSet<String> hashSet=new HashSet<>();
 //        hashSet.add(Role.USER.name());
 //        user.setRoles(hashSet);
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .channel("EMAIL")
+                .recipient(request.getEmail())
+                .subject("Welcome to bookteria")
+                .body("Hello, " + request.getUsername())
+                .build();
 
         userRepository.save(user);
+        kafkaTemplate.send("notification-delivery2",notificationEvent);
 
 
         return userMapper.toUserResponse(user);

@@ -20,4 +20,5 @@ public class UserCreationRequest {
     String firstName;
     LocalDate dob;
     String lastName;
+    String email;
 }
