@@ -1,6 +1,6 @@
 package com.example.BanHang.service;
 
-import com.example.dto.even.NotificationEvent;
+import com.example.event.dto.NotificationEvent;
 import com.example.BanHang.dto.request.UserCreationRequest;
 import com.example.BanHang.dto.request.UserUpdateRequest;
 import com.example.BanHang.dto.response.UserResponse;
