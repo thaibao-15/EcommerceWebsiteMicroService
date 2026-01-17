@@ -37,6 +37,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private String[] publicEndpoints ={
             "/identity/auth/.*",
             "/notification/email/send",
+            "/media/download/.*",
     };
 
     @Value("${app.api-prefix}")
