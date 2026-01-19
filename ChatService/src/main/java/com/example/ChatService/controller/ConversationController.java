@@ -7,10 +7,10 @@ import com.example.ChatService.service.ConversationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/conversations")
@@ -22,6 +22,12 @@ public class ConversationController {
     public ApiResponse<ConversationResponse> createConversation(@RequestBody ConversationRequest request){
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationService.create(request))
+                .build();
+    }
+    @GetMapping("my-conversations")
+    private ApiResponse<List<ConversationResponse>> getAllMyConversations(){
+        return ApiResponse.<List<ConversationResponse>>builder()
+                .result(conversationService.getAllMyConversations())
                 .build();
     }
 }

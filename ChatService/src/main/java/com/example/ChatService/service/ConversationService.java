@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,13 @@ public class ConversationService {
     ProfileClient profileClient;
     ConversationRepository conversationRepository;
     ConversationMapper conversationMapper;
+
+    public List<ConversationResponse> getAllMyConversations(){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Conversation> conversation = conversationRepository.findAllByParticipantIdsContains(userId);
+
+        return conversation.stream().map(conversationMapper::toConversationResponse).collect(Collectors.toList());
+    }
 
     public ConversationResponse create(ConversationRequest request) {
         // Fetch user infos
