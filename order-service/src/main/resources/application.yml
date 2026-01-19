@@ -36,3 +36,6 @@ jwt:
   signerKey: ${JWT_SIGNERKEY:baodeptrai16qTFQgn0y3Rw3U9oKO8Jn7gDxUi54jaB4mVGRwh1pkY7CQaDfgYfB}
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
+app:
+  file:
+    url: http://localhost:8888/api/v1/file/

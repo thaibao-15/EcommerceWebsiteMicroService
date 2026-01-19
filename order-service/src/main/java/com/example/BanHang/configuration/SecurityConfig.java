@@ -30,7 +30,7 @@ public class SecurityConfig {
             "/users", "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh"
     };
     private final String[] PUBLIC_ENDPOINTS_GET ={
-            "/products","/category", "/products/*","/category/*"
+            "/products","/category", "/products/*","/category/*","users/*"
     };
 
     @Value("${jwt.signerKey}")

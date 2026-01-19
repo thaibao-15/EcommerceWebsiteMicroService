@@ -40,6 +40,7 @@ public class FileService {
                 .url(fileInfo.getUrl())
                 .build();
     }
+
     public FileData dowload(String fileName) throws IOException {
         FileMgmt fileMgmt = fileMgmtRepository.findById(fileName).orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
 

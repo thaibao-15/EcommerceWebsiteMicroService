@@ -1,24 +1,20 @@
-package com.example.BanHang.dto.response;
+package com.example.ChatService.dto.response;
 
-import com.example.BanHang.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
+public class UserProfileResponse {
     String id;
     String username;
     String firstName;
     String lastName;
-    String email;
-    String avatar;
     LocalDate dob;
-    Set<Role> roles;
+    String avatar;
 }

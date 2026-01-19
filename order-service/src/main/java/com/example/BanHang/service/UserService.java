@@ -1,5 +1,8 @@
 package com.example.BanHang.service;
 
+import com.example.BanHang.dto.request.ApiResponse;
+import com.example.BanHang.dto.response.FileResponse;
+import com.example.BanHang.repository.httpclient.FileClient;
 import com.example.event.dto.NotificationEvent;
 import com.example.BanHang.dto.request.UserCreationRequest;
 import com.example.BanHang.dto.request.UserUpdateRequest;
@@ -17,10 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +40,7 @@ public class UserService {
     UserRepository userRepository;
     RoleRepository roleRepository;
     CartService cartService;
+    FileClient fileClient;
 
     KafkaTemplate<Object, NotificationEvent> kafkaTemplate;
     PasswordEncoder passwordEncoder =new BCryptPasswordEncoder();
@@ -72,7 +78,7 @@ public class UserService {
                 .map(userMapper::toUserResponse)
                 .toList();
     }
-    @PostAuthorize("returnObject.username==authentication.name")
+
     public UserResponse getUser(String id){
         return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED)));
@@ -102,6 +108,20 @@ public class UserService {
 
         User user= userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
+        return userMapper.toUserResponse(user);
+    }
+    public UserResponse updateAvatar(MultipartFile file){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+        String userId = auth.getName();
+        User user= userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        ApiResponse<FileResponse> fileResponseApi=fileClient.uploadAvatar(file);
+        user.setAvatar(fileResponseApi.getResult().getUrl());
+        userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
 }
